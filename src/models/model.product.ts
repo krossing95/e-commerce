@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 
 export const productSchema = new mongoose.Schema(
   {
-    userId: {
+    vendorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

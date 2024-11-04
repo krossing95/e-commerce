@@ -12,9 +12,6 @@ export const wishlistSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
-    notes: {
-      type: String,
-    },
   },
   { timestamps: true }
 )

@@ -6,6 +6,12 @@ export const productCategorySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    categoryImage: {
+      type: String,
+    },
+    categoryImageId: {
+      type: String,
+    },
     description: {
       type: String,
     },

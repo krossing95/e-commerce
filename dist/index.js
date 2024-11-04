@@ -1,0 +1,26 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const helmet_1 = __importDefault(require("helmet"));
+const cors_1 = __importDefault(require("cors"));
+const http_1 = require("http");
+const app = (0, express_1.default)();
+dotenv_1.default.config();
+const PORT = process.env.PORT || process.env.ECOM_PORT;
+app.use((0, helmet_1.default)());
+app.use((0, cors_1.default)({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+}));
+app.use(express_1.default.json({ limit: "10mb" }));
+app.get("/", (req, res) => {
+    return res.send("Ecommerce System");
+});
+// Routers
+const server = (0, http_1.createServer)(app);
+server.listen(PORT, () => console.log(`Service is running on port ${PORT}`));

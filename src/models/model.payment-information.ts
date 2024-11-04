@@ -3,7 +3,7 @@ import { PaymentInformationType } from "../lib/enum/enum.index"
 
 export const paymentInformationSchema = new mongoose.Schema(
   {
-    userId: {
+    vendorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

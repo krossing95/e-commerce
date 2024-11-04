@@ -12,9 +12,11 @@ export const vendorReviewSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    review: {
+    rate: {
       type: Number,
-      required: true,
+    },
+    review: {
+      type: String,
     },
     isEdited: {
       type: Boolean,

@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 import { WithdrawalRequestStatusEnum } from "../lib/enum/enum.index"
 
-const withdrawalRequestSchema = new mongoose.Schema(
+export const withdrawalRequestSchema = new mongoose.Schema(
   {
     vendorId: {
       type: mongoose.Schema.Types.ObjectId,
