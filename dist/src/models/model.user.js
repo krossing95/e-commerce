@@ -14,9 +14,8 @@ exports.userSchema = new mongoose_1.default.Schema({
     lastname: {
         type: String,
     },
-    tradingName: {
+    username: {
         type: String,
-        unique: true,
     },
     email: {
         type: String,

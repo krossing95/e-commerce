@@ -10,9 +10,8 @@ export const userSchema = new mongoose.Schema(
     lastname: {
       type: String,
     },
-    tradingName: {
+    username: {
       type: String,
-      unique: true,
     },
     email: {
       type: String,
@@ -20,7 +19,6 @@ export const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: true,
     },
     usertype: {
       type: String,
