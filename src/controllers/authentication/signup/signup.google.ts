@@ -93,10 +93,14 @@ const CreateUserUsingGoogle = async (req: Request, res: Response) => {
         data: {},
       })
     }
+
+    const { password, photoId, mfaDisabledAt, ...sendableUser } =
+      createdUser?.toObject()
+
     return res.status(201).json({
       message: "User created successfully",
       code: "201",
-      data: { user: createdUser },
+      data: { user: sendableUser },
     })
   } catch (error) {
     return res.status(500).json({

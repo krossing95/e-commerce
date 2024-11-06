@@ -22,8 +22,6 @@ const useSignUpMailer = async (user: {
     if (sendMessage.accepted.includes(user.email)) return true
     return false
   } catch (error) {
-    console.log(error)
-
     return false
   }
 }

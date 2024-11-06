@@ -23,7 +23,6 @@ exports.userSchema = new mongoose_1.default.Schema({
     },
     phone: {
         type: String,
-        required: true,
     },
     usertype: {
         type: String,
