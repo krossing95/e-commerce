@@ -4,6 +4,7 @@ import helmet from "helmet"
 import cors from "cors"
 import { createServer } from "http"
 import userRouter from "./src/routes/router.user"
+import productCategoryRouter from "./src/routes/router.product-category"
 
 const app = express()
 dotenv.config()
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 // Routers
 
 app.use("/api/users", userRouter)
+app.use("/api/product-categories", productCategoryRouter)
 
 const server = createServer(app)
 server.listen(PORT, () => console.log(`Service is running on port ${PORT}`))

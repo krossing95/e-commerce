@@ -1,5 +1,5 @@
 export type MetaData = {
-  totalPage: number
+  totalPages: number
   totalCount: number
   currentPage: number
   pageSize: number
