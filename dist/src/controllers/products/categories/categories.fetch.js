@@ -30,21 +30,17 @@ const FetchProductCategories = (req, res) => __awaiter(void 0, void 0, void 0, f
     var _a, _b, _c, _d, _e;
     try {
         // retrieve the query params
-        const status = (_a = req.query) === null || _a === void 0 ? void 0 : _a.status;
+        const isActive = (_a = req.query) === null || _a === void 0 ? void 0 : _a.isActive;
         const page = (_b = req.query) === null || _b === void 0 ? void 0 : _b.page;
         const pageDensity = (_c = req.query) === null || _c === void 0 ? void 0 : _c.resultsPerPage;
         const q = (_d = req.query) === null || _d === void 0 ? void 0 : _d.q;
         const orderBy = (_e = req.query) === null || _e === void 0 ? void 0 : _e.orderBy;
         const params = {
-            status: !status
+            isActive: !isActive
                 ? null
-                : !["active", "inactive"].includes(status)
+                : !["true", "false"].includes(isActive.toLowerCase())
                     ? null
-                    : status.toLowerCase() === "active"
-                        ? true
-                        : status.toLowerCase() === "inactive"
-                            ? false
-                            : null,
+                    : isActive.toLowerCase(),
             page: !page ? 1 : !static_index_1.Regex.NUMERICAL.test(page) ? 1 : Number(page),
             pageDensity: !pageDensity
                 ? Number(process.env.ECOM_PAGE_DENSITY)
@@ -60,10 +56,14 @@ const FetchProductCategories = (req, res) => __awaiter(void 0, void 0, void 0, f
         };
         const regex = new RegExp(params.q, "i");
         const query = {
-            $or: [
-                ...(status ? [{ isActive: status }] : []),
-                { category: { $regex: regex } },
-                { description: { $regex: regex } },
+            $and: [
+                ...(params.isActive === null ? [] : [{ isActive: params.isActive }]),
+                {
+                    $or: [
+                        { category: { $regex: regex } },
+                        { description: { $regex: regex } },
+                    ],
+                },
             ],
         };
         // setup pagination values
@@ -96,6 +96,7 @@ const FetchProductCategories = (req, res) => __awaiter(void 0, void 0, void 0, f
             .json({ message: "", code: "200", data: Object.assign({}, returnableData) });
     }
     catch (error) {
+        console.log(error);
         return res
             .status(500)
             .json({ message: "Whoops! Something went wrong", code: "500", data: {} });

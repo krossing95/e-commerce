@@ -30,7 +30,6 @@ exports.productSchema = new mongoose_1.default.Schema({
     },
     discount: {
         type: Number,
-        required: true,
     },
     color: {
         type: String,

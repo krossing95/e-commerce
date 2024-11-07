@@ -26,7 +26,6 @@ export const productSchema = new mongoose.Schema(
     },
     discount: {
       type: Number,
-      required: true,
     },
     color: {
       type: String,
