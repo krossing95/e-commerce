@@ -46,7 +46,7 @@ const DeleteProductCategory = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 categoryId,
             }),
         ]);
-        if (productsByCategoryCount === 0) {
+        if (productsByCategoryCount > 0) {
             // set isDeleted to false
             const disableCategory = yield model_product_category_1.default.findByIdAndUpdate(categoryId, { isDeleted: true }, { new: true }).populate("subcategories");
             if (!disableCategory)

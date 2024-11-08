@@ -31,7 +31,7 @@ const DeleteProductCategory = async (req: Request, res: Response) => {
       }),
     ])
 
-    if (productsByCategoryCount === 0) {
+    if (productsByCategoryCount > 0) {
       // set isDeleted to false
       const disableCategory = await ProductCategory.findByIdAndUpdate<
         PopulatedProductCategoryModel & mongoose.Document

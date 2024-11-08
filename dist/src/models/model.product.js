@@ -81,6 +81,9 @@ exports.productSchema = new mongoose_1.default.Schema({
         type: Boolean,
         default: false,
     },
+    tags: {
+        type: [String],
+    },
 }, { timestamps: true });
 const Product = mongoose_1.default.models.Product || mongoose_1.default.model("Product", exports.productSchema);
 exports.default = Product;
