@@ -1,15 +1,13 @@
 import { Request, Response } from "express"
-import { Regex } from "../../../lib/static/static.index"
-import { paginationSetup } from "../../../configs/pagination/pagination.config"
-import ProductCategory from "../../../models/model.product-category"
-import {
-  PopulatedProductCategoryModel,
-  ProductCategoryModel,
-} from "../../../types/models/type.model.product-category"
+import { Regex } from "../../../../lib/static/static.index"
+import { paginationSetup } from "../../../../configs/pagination/pagination.config"
+import ProductSubcategory from "../../../../models/model.subcategory"
+import { PopulatedProductSubcategoryModel } from "../../../../types/models/type.model.subcategory"
 import mongoose, { SortOrder } from "mongoose"
-import { MetaData } from "../../../types/type.metadata"
+import { MetaData } from "../../../../types/type.metadata"
+import { ProductCategoryModel } from "../../../../types/models/type.model.product-category"
 
-const FetchProductCategories = async (req: Request, res: Response) => {
+const FetchProductSubcategories = async (req: Request, res: Response) => {
   try {
     // retrieve the query params
     const isActive = req.query?.isActive as string | undefined
@@ -17,8 +15,20 @@ const FetchProductCategories = async (req: Request, res: Response) => {
     const pageDensity = req.query?.resultsPerPage as string | undefined
     const q = req.query?.q as string | undefined
     const orderBy = req.query?.orderBy as string | undefined
+    const categoryId = req.query?.categoryId as string | undefined
+
+    if (!categoryId)
+      return res
+        .status(400)
+        .json({ message: "Category Id is required", code: "400", data: {} })
+
+    if (!Regex.MONGOOBJECT.test(categoryId))
+      return res
+        .status(400)
+        .json({ message: "Category Id is required", code: "400", data: {} })
 
     const params = {
+      categoryId,
       isActive: !isActive
         ? null
         : !["true", "false"].includes(isActive.toLowerCase())
@@ -41,15 +51,14 @@ const FetchProductCategories = async (req: Request, res: Response) => {
     const regex = new RegExp(params.q, "i")
     const query = {
       $and: [
+        { categoryId: params.categoryId },
         ...(params.isActive === null ? [] : [{ isActive: params.isActive }]),
         {
-          $or: [
-            { category: { $regex: regex } },
-            { description: { $regex: regex } },
-          ],
+          $or: [{ subcategory: { $regex: regex } }],
         },
       ],
     }
+
     // setup pagination values
     const {
       limit,
@@ -57,15 +66,17 @@ const FetchProductCategories = async (req: Request, res: Response) => {
       skip,
     } = paginationSetup({ page: params.page, page_density: params.pageDensity })
 
-    const sortOptions = { category: params.orderBy as SortOrder }
+    const sortOptions = { subcategory: params.orderBy as SortOrder }
 
     const [totalCount, results] = await Promise.all([
-      ProductCategory.countDocuments(query),
-      ProductCategory.find<ProductCategoryModel & mongoose.Document>(query)
+      ProductSubcategory.countDocuments(query),
+      ProductSubcategory.find<
+        PopulatedProductSubcategoryModel & mongoose.Document
+      >(query)
         .skip(skip)
         .limit(limit)
         .sort(sortOptions)
-        .populate("subcategories")
+        .populate("categoryId")
         .exec(),
     ])
 
@@ -76,18 +87,19 @@ const FetchProductCategories = async (req: Request, res: Response) => {
       pageSize: limit,
     }
 
-    const sendableCategoryList = results.map((result) => {
-      const { categoryImageId, ...sendables } =
-        result?.toObject() as PopulatedProductCategoryModel
-      return sendables
+    const sendableSubcategoryList = results.map((result) => {
+      const { categoryId, ...sendables } =
+        result?.toObject() as PopulatedProductSubcategoryModel
+      const { categoryImageId, ...category } = categoryId
+      return { ...sendables, category }
     })
 
     const returnableData: {
-      collection: ProductCategoryModel[]
+      collection: PopulatedProductSubcategoryModel[]
       meta_data: typeof meta_data
     } = JSON.parse(
       JSON.stringify({
-        collection: sendableCategoryList,
+        collection: sendableSubcategoryList,
         meta_data,
       })
     )
@@ -100,4 +112,4 @@ const FetchProductCategories = async (req: Request, res: Response) => {
       .json({ message: "Whoops! Something went wrong", code: "500", data: {} })
   }
 }
-export default FetchProductCategories
+export default FetchProductSubcategories

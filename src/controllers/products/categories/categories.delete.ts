@@ -2,10 +2,13 @@ import { Request, Response } from "express"
 import mongoose from "mongoose"
 import { Regex } from "../../../lib/static/static.index"
 import Product from "../../../models/model.product"
-import { ProductModel } from "../../../types/models/type.model.product"
 import ProductCategory from "../../../models/model.product-category"
-import { ProductCategoryModel } from "../../../types/models/type.model.product-category"
+import {
+  PopulatedProductCategoryModel,
+  ProductCategoryModel,
+} from "../../../types/models/type.model.product-category"
 import destroyImage from "../../../helpers/image_system/destroy"
+import ProductSubcategory from "../../../models/model.subcategory"
 
 const DeleteProductCategory = async (req: Request, res: Response) => {
   try {
@@ -22,21 +25,26 @@ const DeleteProductCategory = async (req: Request, res: Response) => {
         .json({ message: "Bad request", code: "400", data: {} })
 
     // check if products are associated to the category
-    const productsByCategory = await Product.findOne<ProductModel>({
-      categoryId,
-    })
-    if (productsByCategory) {
+    const [productsByCategoryCount] = await Promise.all([
+      Product.countDocuments({
+        categoryId,
+      }),
+    ])
+
+    if (productsByCategoryCount === 0) {
       // set isDeleted to false
       const disableCategory = await ProductCategory.findByIdAndUpdate<
-        ProductCategoryModel & mongoose.Document
-      >(categoryId, { isDeleted: true }, { new: true })
+        PopulatedProductCategoryModel & mongoose.Document
+      >(categoryId, { isDeleted: true }, { new: true }).populate(
+        "subcategories"
+      )
       if (!disableCategory)
         return res
           .status(404)
           .json({ message: "Category not found", code: "404", data: {} })
 
       const { categoryImageId, ...sendableCategory } =
-        disableCategory?.toObject() as ProductCategoryModel
+        disableCategory?.toObject() as PopulatedProductCategoryModel
 
       return res.status(200).json({
         message: "Category disabled successfully",
@@ -71,6 +79,12 @@ const DeleteProductCategory = async (req: Request, res: Response) => {
     if (categoryImageId) {
       await destroyImage(categoryImageId)
     }
+
+    // delete the subcategories
+
+    const subcategories = sendableCategory.subcategories
+
+    await ProductSubcategory.deleteMany({ _id: { $in: subcategories } })
 
     return res.status(200).json({
       message: "Category deleted successfully",

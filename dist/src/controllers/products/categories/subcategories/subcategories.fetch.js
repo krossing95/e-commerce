@@ -23,11 +23,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const static_index_1 = require("../../../lib/static/static.index");
-const pagination_config_1 = require("../../../configs/pagination/pagination.config");
-const model_product_category_1 = __importDefault(require("../../../models/model.product-category"));
-const FetchProductCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
+const static_index_1 = require("../../../../lib/static/static.index");
+const pagination_config_1 = require("../../../../configs/pagination/pagination.config");
+const model_subcategory_1 = __importDefault(require("../../../../models/model.subcategory"));
+const FetchProductSubcategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d, _e, _f;
     try {
         // retrieve the query params
         const isActive = (_a = req.query) === null || _a === void 0 ? void 0 : _a.isActive;
@@ -35,7 +35,17 @@ const FetchProductCategories = (req, res) => __awaiter(void 0, void 0, void 0, f
         const pageDensity = (_c = req.query) === null || _c === void 0 ? void 0 : _c.resultsPerPage;
         const q = (_d = req.query) === null || _d === void 0 ? void 0 : _d.q;
         const orderBy = (_e = req.query) === null || _e === void 0 ? void 0 : _e.orderBy;
+        const categoryId = (_f = req.query) === null || _f === void 0 ? void 0 : _f.categoryId;
+        if (!categoryId)
+            return res
+                .status(400)
+                .json({ message: "Category Id is required", code: "400", data: {} });
+        if (!static_index_1.Regex.MONGOOBJECT.test(categoryId))
+            return res
+                .status(400)
+                .json({ message: "Category Id is required", code: "400", data: {} });
         const params = {
+            categoryId,
             isActive: !isActive
                 ? null
                 : !["true", "false"].includes(isActive.toLowerCase())
@@ -57,25 +67,23 @@ const FetchProductCategories = (req, res) => __awaiter(void 0, void 0, void 0, f
         const regex = new RegExp(params.q, "i");
         const query = {
             $and: [
+                { categoryId: params.categoryId },
                 ...(params.isActive === null ? [] : [{ isActive: params.isActive }]),
                 {
-                    $or: [
-                        { category: { $regex: regex } },
-                        { description: { $regex: regex } },
-                    ],
+                    $or: [{ subcategory: { $regex: regex } }],
                 },
             ],
         };
         // setup pagination values
         const { limit, page: pageNumber, skip, } = (0, pagination_config_1.paginationSetup)({ page: params.page, page_density: params.pageDensity });
-        const sortOptions = { category: params.orderBy };
+        const sortOptions = { subcategory: params.orderBy };
         const [totalCount, results] = yield Promise.all([
-            model_product_category_1.default.countDocuments(query),
-            model_product_category_1.default.find(query)
+            model_subcategory_1.default.countDocuments(query),
+            model_subcategory_1.default.find(query)
                 .skip(skip)
                 .limit(limit)
                 .sort(sortOptions)
-                .populate("subcategories")
+                .populate("categoryId")
                 .exec(),
         ]);
         const meta_data = {
@@ -84,12 +92,13 @@ const FetchProductCategories = (req, res) => __awaiter(void 0, void 0, void 0, f
             currentPage: pageNumber,
             pageSize: limit,
         };
-        const sendableCategoryList = results.map((result) => {
-            const _a = result === null || result === void 0 ? void 0 : result.toObject(), { categoryImageId } = _a, sendables = __rest(_a, ["categoryImageId"]);
-            return sendables;
+        const sendableSubcategoryList = results.map((result) => {
+            const _a = result === null || result === void 0 ? void 0 : result.toObject(), { categoryId } = _a, sendables = __rest(_a, ["categoryId"]);
+            const { categoryImageId } = categoryId, category = __rest(categoryId, ["categoryImageId"]);
+            return Object.assign(Object.assign({}, sendables), { category });
         });
         const returnableData = JSON.parse(JSON.stringify({
-            collection: sendableCategoryList,
+            collection: sendableSubcategoryList,
             meta_data,
         }));
         return res
@@ -102,4 +111,4 @@ const FetchProductCategories = (req, res) => __awaiter(void 0, void 0, void 0, f
             .json({ message: "Whoops! Something went wrong", code: "500", data: {} });
     }
 });
-exports.default = FetchProductCategories;
+exports.default = FetchProductSubcategories;

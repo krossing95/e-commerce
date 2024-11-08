@@ -73,8 +73,8 @@ const UpdateProductCategory = (req, res) => __awaiter(void 0, void 0, void 0, fu
                     photo_data: requestBody.category_image,
                     folder: "product-category",
                 });
-                categoryImage = uploadImage.secure_url || categoryData.categoryImage;
-                categoryImageId = uploadImage.photo_id || categoryData.categoryImageId;
+                categoryImage = uploadImage.secure_url || null;
+                categoryImageId = uploadImage.photo_id || null;
             }
             // update the category
             const updatedCategory = yield model_product_category_1.default.findByIdAndUpdate(requestBody.category_id, {
@@ -83,7 +83,7 @@ const UpdateProductCategory = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 categoryImageId,
                 description: requestBody.description,
                 isActive: requestBody.is_active,
-            }, { new: true });
+            }, { new: true }).populate("subcategories");
             const _a = updatedCategory === null || updatedCategory === void 0 ? void 0 : updatedCategory.toObject(), { categoryImageId: id } = _a, sendableCategory = __rest(_a, ["categoryImageId"]);
             return res.status(200).json({
                 message: "Product category updated succesfully",

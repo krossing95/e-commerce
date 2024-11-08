@@ -24,6 +24,7 @@ const model_user_1 = require("../../models/model.user");
 const model_vendor_review_1 = require("../../models/model.vendor-review");
 const model_wishlist_1 = require("../../models/model.wishlist");
 const model_withdrawal_request_1 = require("../../models/model.withdrawal-request");
+const model_subcategory_1 = require("../../models/model.subcategory");
 let isConnected = false; // Variable to track the connection status
 const connection = () => __awaiter(void 0, void 0, void 0, function* () {
     // Set strict query mode for Mongoose to prevent unknown field queries.
@@ -37,6 +38,8 @@ const connection = () => __awaiter(void 0, void 0, void 0, function* () {
         mongoose_1.default.model("PaymentInformation", model_payment_information_1.paymentInformationSchema);
     mongoose_1.default.models.ProductCategory ||
         mongoose_1.default.model("ProductCategory", model_product_category_1.productCategorySchema);
+    mongoose_1.default.models.ProductSubcategory ||
+        mongoose_1.default.model("ProductSubcategory", model_subcategory_1.subcategorySchema);
     mongoose_1.default.models.ProductReview ||
         mongoose_1.default.model("ProductReview", model_product_review_1.productReviewSchema);
     mongoose_1.default.models.Product || mongoose_1.default.model("Product", model_product_1.productSchema);

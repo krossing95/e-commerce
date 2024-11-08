@@ -16,6 +16,10 @@ exports.productSchema = new mongoose_1.default.Schema({
         ref: "ProductCategory",
         required: true,
     },
+    subcategoryId: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "ProductSubcategory",
+    },
     productName: {
         type: String,
         required: true,

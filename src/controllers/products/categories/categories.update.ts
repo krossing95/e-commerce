@@ -2,7 +2,10 @@ import { Request, Response } from "express"
 import { isTrueBodyStructure } from "../../../helpers/request/helper.request"
 import { useProductCategoryUpdationValidator } from "../../../validators/product-categories/validator.update-category"
 import ProductCategory from "../../../models/model.product-category"
-import { ProductCategoryModel } from "../../../types/models/type.model.product-category"
+import {
+  PopulatedProductCategoryModel,
+  ProductCategoryModel,
+} from "../../../types/models/type.model.product-category"
 import mongoose from "mongoose"
 import imageStorage from "../../../helpers/image_system/storage"
 
@@ -67,14 +70,14 @@ const UpdateProductCategory = async (req: Request, res: Response) => {
             photo_data: requestBody.category_image,
             folder: "product-category",
           })
-          categoryImage = uploadImage.secure_url || categoryData.categoryImage
-          categoryImageId = uploadImage.photo_id || categoryData.categoryImageId
+          categoryImage = uploadImage.secure_url || null
+          categoryImageId = uploadImage.photo_id || null
         }
 
         // update the category
 
         const updatedCategory = await ProductCategory.findByIdAndUpdate<
-          ProductCategoryModel & mongoose.Document
+          PopulatedProductCategoryModel & mongoose.Document
         >(
           requestBody.category_id,
           {
@@ -85,10 +88,10 @@ const UpdateProductCategory = async (req: Request, res: Response) => {
             isActive: requestBody.is_active,
           },
           { new: true }
-        )
+        ).populate("subcategories")
 
         const { categoryImageId: id, ...sendableCategory } =
-          updatedCategory?.toObject() as ProductCategoryModel
+          updatedCategory?.toObject() as PopulatedProductCategoryModel
 
         return res.status(200).json({
           message: "Product category updated succesfully",

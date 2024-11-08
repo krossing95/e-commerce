@@ -12,6 +12,10 @@ export const productSchema = new mongoose.Schema(
       ref: "ProductCategory",
       required: true,
     },
+    subcategoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ProductSubcategory",
+    },
     productName: {
       type: String,
       required: true,

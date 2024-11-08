@@ -6,6 +6,11 @@ export const productCategorySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    subcategories: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "ProductSubcategory",
+      default: [],
+    },
     categoryImage: {
       type: String,
     },

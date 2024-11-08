@@ -9,6 +9,7 @@ import { userSchema } from "../../models/model.user"
 import { vendorReviewSchema } from "../../models/model.vendor-review"
 import { wishlistSchema } from "../../models/model.wishlist"
 import { withdrawalRequestSchema } from "../../models/model.withdrawal-request"
+import { subcategorySchema } from "../../models/model.subcategory"
 
 let isConnected = false // Variable to track the connection status
 
@@ -27,6 +28,8 @@ export const connection = async () => {
     mongoose.model("PaymentInformation", paymentInformationSchema)
   mongoose.models.ProductCategory ||
     mongoose.model("ProductCategory", productCategorySchema)
+  mongoose.models.ProductSubcategory ||
+    mongoose.model("ProductSubcategory", subcategorySchema)
   mongoose.models.ProductReview ||
     mongoose.model("ProductReview", productReviewSchema)
   mongoose.models.Product || mongoose.model("Product", productSchema)

@@ -27,6 +27,7 @@ const static_index_1 = require("../../../lib/static/static.index");
 const model_product_1 = __importDefault(require("../../../models/model.product"));
 const model_product_category_1 = __importDefault(require("../../../models/model.product-category"));
 const destroy_1 = __importDefault(require("../../../helpers/image_system/destroy"));
+const model_subcategory_1 = __importDefault(require("../../../models/model.subcategory"));
 const DeleteProductCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -40,12 +41,14 @@ const DeleteProductCategory = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 .status(400)
                 .json({ message: "Bad request", code: "400", data: {} });
         // check if products are associated to the category
-        const productsByCategory = yield model_product_1.default.findOne({
-            categoryId,
-        });
-        if (productsByCategory) {
+        const [productsByCategoryCount] = yield Promise.all([
+            model_product_1.default.countDocuments({
+                categoryId,
+            }),
+        ]);
+        if (productsByCategoryCount === 0) {
             // set isDeleted to false
-            const disableCategory = yield model_product_category_1.default.findByIdAndUpdate(categoryId, { isDeleted: true }, { new: true });
+            const disableCategory = yield model_product_category_1.default.findByIdAndUpdate(categoryId, { isDeleted: true }, { new: true }).populate("subcategories");
             if (!disableCategory)
                 return res
                     .status(404)
@@ -78,6 +81,9 @@ const DeleteProductCategory = (req, res) => __awaiter(void 0, void 0, void 0, fu
         if (categoryImageId) {
             yield (0, destroy_1.default)(categoryImageId);
         }
+        // delete the subcategories
+        const subcategories = sendableCategory.subcategories;
+        yield model_subcategory_1.default.deleteMany({ _id: { $in: subcategories } });
         return res.status(200).json({
             message: "Category deleted successfully",
             code: "200",
