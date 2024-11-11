@@ -10,6 +10,8 @@ const cors_1 = __importDefault(require("cors"));
 const http_1 = require("http");
 const router_user_1 = __importDefault(require("./src/routes/router.user"));
 const router_product_category_1 = __importDefault(require("./src/routes/router.product-category"));
+const router_resources_1 = __importDefault(require("./src/routes/router.resources"));
+const routes_product_1 = __importDefault(require("./src/routes/routes.product"));
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 const PORT = process.env.PORT || process.env.ECOM_PORT;
@@ -26,5 +28,7 @@ app.get("/", (req, res) => {
 // Routers
 app.use("/api/users", router_user_1.default);
 app.use("/api/product-categories", router_product_category_1.default);
+app.use("/api/resources", router_resources_1.default);
+app.use("/api/products", routes_product_1.default);
 const server = (0, http_1.createServer)(app);
 server.listen(PORT, () => console.log(`Service is running on port ${PORT}`));

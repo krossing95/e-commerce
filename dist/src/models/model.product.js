@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productSchema = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
+const enum_index_1 = require("../lib/enum/enum.index");
 exports.productSchema = new mongoose_1.default.Schema({
     vendorId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
@@ -26,11 +27,12 @@ exports.productSchema = new mongoose_1.default.Schema({
     },
     quantity: {
         type: Number,
-        required: true,
+    },
+    quantitySold: {
+        type: Number,
     },
     price: {
         type: Number,
-        required: true,
     },
     discount: {
         type: Number,
@@ -47,16 +49,14 @@ exports.productSchema = new mongoose_1.default.Schema({
     region: {
         type: String,
     },
-    town: {
+    district: {
         type: String,
     },
     featuredImage: {
         type: String,
-        required: true,
     },
     featuredImageId: {
         type: String,
-        required: true,
     },
     productImages: {
         type: [
@@ -65,17 +65,15 @@ exports.productSchema = new mongoose_1.default.Schema({
                 productImageId: { type: String, required: true },
             },
         ],
+        default: [],
+    },
+    publishingStatus: {
+        type: String,
+        enum: enum_index_1.ProductPublishingStatusEnum,
+        default: enum_index_1.ProductPublishingStatusEnum.DRAFTED,
     },
     isNegotiable: {
         type: Boolean,
-    },
-    isPublished: {
-        type: Boolean,
-        default: false,
-    },
-    isActive: {
-        type: Boolean,
-        default: true,
     },
     isDeleted: {
         type: Boolean,
@@ -83,6 +81,7 @@ exports.productSchema = new mongoose_1.default.Schema({
     },
     tags: {
         type: [String],
+        default: [],
     },
 }, { timestamps: true });
 const Product = mongoose_1.default.models.Product || mongoose_1.default.model("Product", exports.productSchema);

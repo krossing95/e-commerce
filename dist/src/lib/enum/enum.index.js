@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WithdrawalRequestStatusEnum = exports.PaymentInformationType = exports.GenderEnum = exports.UsertypeEnum = void 0;
+exports.ProductPublishingStatusEnum = exports.WithdrawalRequestStatusEnum = exports.PaymentInformationType = exports.GenderEnum = exports.UsertypeEnum = void 0;
 var UsertypeEnum;
 (function (UsertypeEnum) {
     UsertypeEnum["CUSTOMER"] = "customer";
@@ -23,3 +23,8 @@ var WithdrawalRequestStatusEnum;
     WithdrawalRequestStatusEnum["PENDING"] = "pending";
     WithdrawalRequestStatusEnum["CREDITED"] = "credited";
 })(WithdrawalRequestStatusEnum || (exports.WithdrawalRequestStatusEnum = WithdrawalRequestStatusEnum = {}));
+var ProductPublishingStatusEnum;
+(function (ProductPublishingStatusEnum) {
+    ProductPublishingStatusEnum["DRAFTED"] = "drafted";
+    ProductPublishingStatusEnum["PUBLISHED"] = "published";
+})(ProductPublishingStatusEnum || (exports.ProductPublishingStatusEnum = ProductPublishingStatusEnum = {}));

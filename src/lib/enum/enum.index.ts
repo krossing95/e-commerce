@@ -19,3 +19,8 @@ export enum WithdrawalRequestStatusEnum {
   PENDING = "pending",
   CREDITED = "credited",
 }
+
+export enum ProductPublishingStatusEnum {
+  DRAFTED = "drafted",
+  PUBLISHED = "published",
+}

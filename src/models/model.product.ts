@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import { ProductPublishingStatusEnum } from "../lib/enum/enum.index"
 
 export const productSchema = new mongoose.Schema(
   {
@@ -22,11 +23,12 @@ export const productSchema = new mongoose.Schema(
     },
     quantity: {
       type: Number,
-      required: true,
+    },
+    quantitySold: {
+      type: Number,
     },
     price: {
       type: Number,
-      required: true,
     },
     discount: {
       type: Number,
@@ -43,16 +45,14 @@ export const productSchema = new mongoose.Schema(
     region: {
       type: String,
     },
-    town: {
+    district: {
       type: String,
     },
     featuredImage: {
       type: String,
-      required: true,
     },
     featuredImageId: {
       type: String,
-      required: true,
     },
     productImages: {
       type: [
@@ -61,17 +61,15 @@ export const productSchema = new mongoose.Schema(
           productImageId: { type: String, required: true },
         },
       ],
+      default: [],
+    },
+    publishingStatus: {
+      type: String,
+      enum: ProductPublishingStatusEnum,
+      default: ProductPublishingStatusEnum.DRAFTED,
     },
     isNegotiable: {
       type: Boolean,
-    },
-    isPublished: {
-      type: Boolean,
-      default: false,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
     },
     isDeleted: {
       type: Boolean,
@@ -79,6 +77,7 @@ export const productSchema = new mongoose.Schema(
     },
     tags: {
       type: [String],
+      default: [],
     },
   },
   { timestamps: true }
