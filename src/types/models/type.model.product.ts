@@ -1,4 +1,7 @@
 import { ProductPublishingStatusEnum } from "../../lib/enum/enum.index"
+import { ProductCategoryModel } from "./type.model.product-category"
+import { ProductSubcategoryModel } from "./type.model.subcategory"
+import { UserModel } from "./type.model.user"
 
 export type ProductModel = {
   _id: string
@@ -23,4 +26,13 @@ export type ProductModel = {
   isDeleted: boolean
   createdAt: string
   updatedAt: string
+}
+
+export type PopulatedProductModel = Omit<
+  ProductModel,
+  "vendorId" | "categoryId" | "subcategoryId"
+> & {
+  vendorId: UserModel
+  categoryId: ProductCategoryModel
+  subcategoryId: ProductSubcategoryModel
 }

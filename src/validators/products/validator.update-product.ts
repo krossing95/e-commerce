@@ -1,0 +1,135 @@
+import { NextFunction } from "express"
+import { UpdateProductPayload } from "../../controllers/products/products/product.update"
+import { Regex, Regions } from "../../lib/static/static.index"
+import { cleanExcessWhiteSpaces } from "../../helpers/methods/method.string"
+import { ProductPublishingStatusEnum } from "../../lib/enum/enum.index"
+
+export const useProductUpdationValidator = (
+  data: UpdateProductPayload,
+  next: NextFunction
+) => {
+  const {
+    product_id, //required
+    category_id, // required
+    product_name, // required
+    subcategory_id,
+    quantity,
+    discount,
+    price,
+    district,
+    region,
+    product_images,
+    featured_image,
+    is_negotiable,
+    publishing_status,
+  } = data
+
+  if (
+    !Regex.MONGOOBJECT.test(category_id) ||
+    !Regex.MONGOOBJECT.test(product_id)
+  )
+    return { error: "Incorrect category provided" }
+
+  const refinedProductName = cleanExcessWhiteSpaces(product_name)
+  if (refinedProductName.length === 0)
+    return { error: "Product name is required" }
+
+  if (refinedProductName.includes("<script>"))
+    return { error: "Product name is rejected" }
+
+  if (typeof publishing_status === "string") {
+    if (publishing_status.length === 0)
+      return { error: "Publishing status is missing request" }
+    if (
+      ![
+        ProductPublishingStatusEnum.DRAFTED,
+        ProductPublishingStatusEnum.PUBLISHED,
+      ].includes(publishing_status)
+    )
+      return { error: "Publishing status is not accepted" }
+  }
+
+  if (typeof subcategory_id === "string") {
+    if (!Regex.MONGOOBJECT.test(subcategory_id))
+      return { error: "Incorrect subcategory provided" }
+  }
+
+  if (typeof quantity === "number") {
+    if (quantity === 0) return { error: "Product quantity cannot be 0" }
+  }
+
+  if (typeof discount === "number") {
+    if (discount === 0) return { error: "Discount cannot be 0" }
+    if (discount > 100)
+      return { error: "Discount is a value ranging between 0 & 100" }
+  }
+
+  if (typeof price === "number") {
+    if (price === 0) return { error: "Product price cannot be 0" }
+  }
+
+  if (typeof is_negotiable === "boolean") {
+    if (![true, false].includes(is_negotiable))
+      return { error: "Incorrect data provided" }
+  }
+
+  if (typeof region === "string") {
+    if (typeof district !== "string")
+      return { error: "Provide a district in the selected region" }
+    const regions = Regions.map((reg) => reg.region)
+    if (!regions.includes(region))
+      return { error: "Provided region does not exists" }
+    const regionData = Regions.filter((reg) => reg.region === region)?.[0]
+
+    const districts = regionData.districts.map((district) => district)
+
+    if (!districts.includes(district))
+      return { error: "Provided district does not exist in the chosen region" }
+  }
+
+  if (typeof featured_image === "string") {
+    const featuredImageParts = featured_image.split(",", 2)
+    if (featuredImageParts.length === 2) {
+      const featuredImageExtension = featuredImageParts[0]
+      const imageData = featuredImageParts[1]
+      if (!Regex.ISBASE64.test(imageData))
+        return { error: "Invalid featured image detected" }
+      if (
+        featuredImageExtension !== "data:image/png;base64" &&
+        featuredImageExtension !== "data:image/jpeg;base64" &&
+        featuredImageExtension !== "data:image/jpg;base64" &&
+        featuredImageExtension !== "data:image/webp;base64"
+      )
+        return {
+          error: "Choose jpeg, jpg, png, webp files only.",
+        }
+    }
+  }
+
+  if (product_images) {
+    if (product_images.length > 0) {
+      let imageHasError = false
+      for (let i = 0; i < product_images.length; i++) {
+        const productImage = product_images[i]
+        const productImageParts = productImage.split(",", 2)
+        if (productImageParts.length !== 2) imageHasError = true
+        if (productImageParts.length === 2) {
+          const featuredImageExtension = productImageParts[0]
+          const imageData = productImageParts[1]
+          if (!Regex.ISBASE64.test(imageData)) imageHasError = true
+          if (
+            featuredImageExtension !== "data:image/png;base64" &&
+            featuredImageExtension !== "data:image/jpeg;base64" &&
+            featuredImageExtension !== "data:image/jpg;base64" &&
+            featuredImageExtension !== "data:image/webp;base64"
+          )
+            imageHasError = true
+        }
+      }
+      if (imageHasError)
+        return { error: "One or more product image(s) is/are invalid" }
+    }
+  }
+
+  next()
+}
