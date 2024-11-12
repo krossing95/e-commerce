@@ -5,7 +5,6 @@ import ProductSubcategory from "../../../../models/model.subcategory"
 import { PopulatedProductSubcategoryModel } from "../../../../types/models/type.model.subcategory"
 import mongoose, { SortOrder } from "mongoose"
 import { MetaData } from "../../../../types/type.metadata"
-import { ProductCategoryModel } from "../../../../types/models/type.model.product-category"
 
 const FetchProductSubcategories = async (req: Request, res: Response) => {
   try {

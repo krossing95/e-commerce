@@ -1,5 +1,5 @@
 import { NextFunction } from "express"
-import { UpdateProductPayload } from "../../controllers/products/products/product.update"
+import { UpdateProductPayload } from "../../controllers/products/products/products.update"
 import { Regex, Regions } from "../../lib/static/static.index"
 import { cleanExcessWhiteSpaces } from "../../helpers/methods/method.string"
 import { ProductPublishingStatusEnum } from "../../lib/enum/enum.index"
