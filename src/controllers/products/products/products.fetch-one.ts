@@ -193,7 +193,8 @@ const FetchASingleProduct = async (req: Request, res: Response) => {
       }).populate([
         {
           path: "customerId",
-          select: "-password -mfaActivated -mfaActivatedAt",
+          select:
+            "-password -mfaActivated -mfaActivatedAt -usertype -usertype -gender -isVerified -isDeleted -isSocial",
         },
       ]),
       ProductReview.countDocuments({

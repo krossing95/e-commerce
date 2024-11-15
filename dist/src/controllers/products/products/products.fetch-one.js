@@ -158,7 +158,7 @@ const FetchASingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, func
             }).populate([
                 {
                     path: "customerId",
-                    select: "-password -mfaActivated -mfaActivatedAt",
+                    select: "-password -mfaActivated -mfaActivatedAt -usertype -usertype -gender -isVerified -isDeleted -isSocial",
                 },
             ]),
             model_product_review_1.default.countDocuments({

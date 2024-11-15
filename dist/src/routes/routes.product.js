@@ -13,6 +13,8 @@ const products_fetch_across_vendors_1 = __importDefault(require("../controllers/
 const products_fetch_one_1 = __importDefault(require("../controllers/products/products/products.fetch-one"));
 const products_delete_1 = __importDefault(require("../controllers/products/products/products.delete"));
 const products_delete_photos_1 = __importDefault(require("../controllers/products/products/products.delete-photos"));
+const middleware_all_users_1 = __importDefault(require("../middlewares/middleware.all-users"));
+const reviews_create_1 = __importDefault(require("../controllers/products/products/reviews/reviews.create"));
 const productRouter = express_1.default.Router();
 productRouter.post("/create", middleware_vendor_1.default, products_create_1.default);
 productRouter.patch("/update", middleware_vendor_1.default, products_update_1.default);
@@ -21,4 +23,5 @@ productRouter.get("/products-across-vendors", middleware_connection_1.Connection
 productRouter.get("/products-detail", middleware_connection_1.ConnectionMiddleware, products_fetch_one_1.default);
 productRouter.delete("/delete", middleware_vendor_1.default, products_delete_1.default);
 productRouter.patch("/photos-removal", middleware_vendor_1.default, products_delete_photos_1.default);
+productRouter.post("/rate-or-review", middleware_all_users_1.default, reviews_create_1.default);
 exports.default = productRouter;

@@ -8,6 +8,8 @@ import FetchProductsAcrossVendors from "../controllers/products/products/product
 import FetchASingleProduct from "../controllers/products/products/products.fetch-one"
 import DeleteProduct from "../controllers/products/products/products.delete"
 import DeleteProductPhotos from "../controllers/products/products/products.delete-photos"
+import InterUserMiddleware from "../middlewares/middleware.all-users"
+import CreateProductReview from "../controllers/products/products/reviews/reviews.create"
 
 const productRouter = express.Router()
 
@@ -26,5 +28,7 @@ productRouter.get(
 productRouter.get("/products-detail", ConnectionMiddleware, FetchASingleProduct)
 productRouter.delete("/delete", VendorMiddleware, DeleteProduct)
 productRouter.patch("/photos-removal", VendorMiddleware, DeleteProductPhotos)
+
+productRouter.post("/rate-or-review", InterUserMiddleware, CreateProductReview)
 
 export default productRouter

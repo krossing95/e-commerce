@@ -4,8 +4,8 @@ export type ProductReviewModel = {
   _id: string
   productId: string
   customerId: string
-  rate: number
-  review: string
+  rate: number | null
+  review: string | null
   isEdited: boolean
   isDeleted: boolean
 }
