@@ -26,10 +26,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const middleware_jwt_data_1 = __importDefault(require("../../../middlewares/middleware.jwt-data"));
 const static_index_1 = require("../../../lib/static/static.index");
 const pagination_config_1 = require("../../../configs/pagination/pagination.config");
+const mongoose_1 = __importDefault(require("mongoose"));
 const model_product_1 = __importDefault(require("../../../models/model.product"));
 const method_on_product_1 = require("../../../helpers/methods/method.on-product");
+const model_product_review_1 = __importDefault(require("../../../models/model.product-review"));
+const enum_index_1 = require("../../../lib/enum/enum.index");
 const FetchProductsByVendor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     try {
         // retrieve the request.authorization data
         const tokenData = yield (0, middleware_jwt_data_1.default)(req);
@@ -40,17 +43,25 @@ const FetchProductsByVendor = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 .json({ message: "Authorization is required", code: "401", data: {} });
         const tokenDataObject = tokenData;
         // retrieve the query params
-        const isActive = (_a = req.query) === null || _a === void 0 ? void 0 : _a.isActive;
-        const page = (_b = req.query) === null || _b === void 0 ? void 0 : _b.page;
-        const pageDensity = (_c = req.query) === null || _c === void 0 ? void 0 : _c.resultsPerPage;
-        const q = (_d = req.query) === null || _d === void 0 ? void 0 : _d.q;
-        const orderBy = (_e = req.query) === null || _e === void 0 ? void 0 : _e.orderBy;
+        const isPublished = (_a = req.query) === null || _a === void 0 ? void 0 : _a.isPublished;
+        const isDeleted = (_b = req.query) === null || _b === void 0 ? void 0 : _b.isDeleted;
+        const page = (_c = req.query) === null || _c === void 0 ? void 0 : _c.page;
+        const pageDensity = (_d = req.query) === null || _d === void 0 ? void 0 : _d.resultsPerPage;
+        const q = (_e = req.query) === null || _e === void 0 ? void 0 : _e.q;
+        const orderBy = (_f = req.query) === null || _f === void 0 ? void 0 : _f.orderBy;
         const params = {
-            isActive: !isActive
+            isPublished: !isPublished
                 ? null
-                : !["true", "false"].includes(isActive.toLowerCase())
+                : !["true", "false"].includes(isPublished.toLowerCase())
                     ? null
-                    : isActive.toLowerCase(),
+                    : isPublished.toLowerCase() === "false"
+                        ? enum_index_1.ProductPublishingStatusEnum.DRAFTED
+                        : enum_index_1.ProductPublishingStatusEnum.PUBLISHED,
+            isDeleted: !isDeleted
+                ? null
+                : !["true", "false"].includes(isDeleted.toLowerCase())
+                    ? null
+                    : isDeleted.toLowerCase(),
             page: !page ? 1 : !static_index_1.Regex.NUMERICAL.test(page) ? 1 : Number(page),
             pageDensity: !pageDensity
                 ? Number(process.env.ECOM_PAGE_DENSITY)
@@ -68,7 +79,10 @@ const FetchProductsByVendor = (req, res) => __awaiter(void 0, void 0, void 0, fu
         const query = {
             $and: [
                 { vendorId: tokenDataObject._id },
-                ...(params.isActive === null ? [] : [{ isActive: params.isActive }]),
+                ...(params.isPublished === null
+                    ? []
+                    : [{ publishingStatus: params.isPublished }]),
+                ...(params.isDeleted === null ? [] : [{ isDeleted: params.isDeleted }]),
                 {
                     $or: [
                         { productName: { $regex: regex } },
@@ -116,11 +130,38 @@ const FetchProductsByVendor = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 price: restPoductInformation.price,
                 discount: restPoductInformation.discount,
             });
-            const returnableProduct = Object.assign(Object.assign({}, restPoductInformation), { category: categoryId, subcategory: subcategoryId, productImages: productImages.map((img) => img.productImageUrl), discountedPrice });
+            const returnableProduct = Object.assign(Object.assign({}, restPoductInformation), { category: categoryId, subcategory: subcategoryId, productImages: productImages.map((img) => img.productImageUrl), discountedPrice, starRating: 0 });
             return returnableProduct;
         });
+        // get the rates for each of the products
+        const productIds = sendableProductList.map((product) => product._id.toString());
+        let rates = [];
+        if (productIds.length > 0) {
+            for (let i = 0; i < productIds.length; i++) {
+                const productId = productIds[i];
+                const result = yield model_product_review_1.default.aggregate([
+                    {
+                        $match: {
+                            productId: new mongoose_1.default.Types.ObjectId(productId),
+                            isDeleted: false,
+                        },
+                    },
+                    { $group: { _id: "$productId", averageRate: { $avg: "$rate" } } },
+                ]);
+                const averageRate = result.length > 0 ? result[0].averageRate : 0;
+                rates = [...rates, { product_id: productId, rate: averageRate }];
+            }
+        }
+        const sendableProductListWtRates = sendableProductList.map((product) => {
+            rates.map((rate) => {
+                if (rate.product_id.toString() === product._id.toString()) {
+                    product.starRating = rate.rate;
+                }
+            });
+            return product;
+        });
         const returnableData = JSON.parse(JSON.stringify({
-            collection: sendableProductList,
+            collection: sendableProductListWtRates,
             meta_data,
         }));
         return res

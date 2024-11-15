@@ -6,22 +6,32 @@ import Product from "../../../models/model.product"
 import { PopulatedProductModel } from "../../../types/models/type.model.product"
 import { MetaData } from "../../../types/type.metadata"
 import { discountCalculation } from "../../../helpers/methods/method.on-product"
+import ProductReview from "../../../models/model.product-review"
+import { ProductPublishingStatusEnum } from "../../../lib/enum/enum.index"
 
 const FetchProductsAcrossVendors = async (req: Request, res: Response) => {
   try {
     // retrieve the query params
-    const isActive = req.query?.isActive as string | undefined
+    const isPublished = req.query?.isPublished as string | undefined
+    const isDeleted = req.query?.isDeleted as string | undefined
     const page = req.query?.page as string | undefined
     const pageDensity = req.query?.resultsPerPage as string | undefined
     const q = req.query?.q as string | undefined
     const orderBy = req.query?.orderBy as string | undefined
 
     const params = {
-      isActive: !isActive
+      isPublished: !isPublished
         ? null
-        : !["true", "false"].includes(isActive.toLowerCase())
+        : !["true", "false"].includes(isPublished.toLowerCase())
         ? null
-        : isActive.toLowerCase(),
+        : isPublished.toLowerCase() === "false"
+        ? ProductPublishingStatusEnum.DRAFTED
+        : ProductPublishingStatusEnum.PUBLISHED,
+      isDeleted: !isDeleted
+        ? null
+        : !["true", "false"].includes(isDeleted.toLowerCase())
+        ? null
+        : isDeleted.toLowerCase(),
       page: !page ? 1 : !Regex.NUMERICAL.test(page) ? 1 : Number(page),
       pageDensity: !pageDensity
         ? Number(process.env.ECOM_PAGE_DENSITY)
@@ -39,7 +49,10 @@ const FetchProductsAcrossVendors = async (req: Request, res: Response) => {
     const regex = new RegExp(params.q, "i")
     const query = {
       $and: [
-        ...(params.isActive === null ? [] : [{ isActive: params.isActive }]),
+        ...(params.isPublished === null
+          ? []
+          : [{ publishingStatus: params.isPublished }]),
+        ...(params.isDeleted === null ? [] : [{ isDeleted: params.isDeleted }]),
         {
           $or: [
             { productName: { $regex: regex } },
@@ -114,17 +127,54 @@ const FetchProductsAcrossVendors = async (req: Request, res: Response) => {
         subcategory: subcategoryId,
         productImages: productImages.map((img) => img.productImageUrl),
         discountedPrice,
+        starRating: 0,
       }
 
       return returnableProduct
     })
 
+    // get the rates for each of the products
+    const productIds = sendableProductList.map((product) =>
+      product._id.toString()
+    )
+
+    let rates: { product_id: string; rate: number }[] = []
+
+    if (productIds.length > 0) {
+      for (let i = 0; i < productIds.length; i++) {
+        const productId = productIds[i]
+        const result = await ProductReview.aggregate([
+          {
+            $match: {
+              productId: new mongoose.Types.ObjectId(productId),
+              isDeleted: false,
+            },
+          },
+          { $group: { _id: "$productId", averageRate: { $avg: "$rate" } } },
+        ])
+
+        const averageRate =
+          result.length > 0 ? (result[0].averageRate as number) : 0
+
+        rates = [...rates, { product_id: productId, rate: averageRate }]
+      }
+    }
+
+    const sendableProductListWtRates = sendableProductList.map((product) => {
+      rates.map((rate) => {
+        if (rate.product_id.toString() === product._id.toString()) {
+          product.starRating = rate.rate
+        }
+      })
+      return product
+    })
+
     const returnableData: {
-      collection: (typeof sendableProductList)[]
+      collection: (typeof sendableProductListWtRates)[]
       meta_data: typeof meta_data
     } = JSON.parse(
       JSON.stringify({
-        collection: sendableProductList,
+        collection: sendableProductListWtRates,
         meta_data,
       })
     )

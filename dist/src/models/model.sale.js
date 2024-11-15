@@ -25,7 +25,7 @@ exports.saleSchema = new mongoose_1.default.Schema({
         required: true,
     },
     isWithdrawn: {
-        type: Number,
+        type: Boolean,
         default: false,
     },
     isEdited: {
