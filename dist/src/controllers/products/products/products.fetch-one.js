@@ -67,13 +67,13 @@ const FetchASingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, func
             return res
                 .status(404)
                 .json({ message: "Product not found", code: "404", data: {} });
-        const _e = productData.toObject(), { categoryId, subcategoryId, featuredImageId, productImages } = _e, restProductInformation = __rest(_e, ["categoryId", "subcategoryId", "featuredImageId", "productImages"]);
+        const _e = productData.toObject(), { categoryId, subcategoryId, featuredImageId, productImages, vendorId } = _e, restProductInformation = __rest(_e, ["categoryId", "subcategoryId", "featuredImageId", "productImages", "vendorId"]);
         // calculate discounted price
         const discountedPrice = (0, method_on_product_1.discountCalculation)({
             price: restProductInformation.price,
             discount: restProductInformation.discount,
         });
-        const returnableProduct = Object.assign(Object.assign({}, restProductInformation), { category: categoryId, subcategory: subcategoryId, productImages: productImages.map((img) => img.productImageUrl), discountedPrice, starRating: 0 });
+        const returnableProduct = Object.assign(Object.assign({}, restProductInformation), { category: categoryId, subcategory: subcategoryId, vendor: vendorId, productImages: productImages.map((img) => img.productImageUrl), discountedPrice, starRating: 0 });
         // retrieve the average rate
         const averageRateResult = yield model_product_review_1.default.aggregate([
             {
@@ -115,13 +115,13 @@ const FetchASingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, func
         ])
             .limit(10);
         const sendableRelatedProductList = relatedProducts.map((relatedProduct) => {
-            const _a = relatedProduct.toObject(), { categoryId, subcategoryId, featuredImageId, productImages } = _a, restRelatedProductInformation = __rest(_a, ["categoryId", "subcategoryId", "featuredImageId", "productImages"]);
+            const _a = relatedProduct.toObject(), { categoryId, subcategoryId, featuredImageId, productImages, vendorId } = _a, restRelatedProductInformation = __rest(_a, ["categoryId", "subcategoryId", "featuredImageId", "productImages", "vendorId"]);
             // calculate discounted price
             const discountedPrice = (0, method_on_product_1.discountCalculation)({
                 price: restRelatedProductInformation.price,
                 discount: restRelatedProductInformation.discount,
             });
-            const returnableRelatedProduct = Object.assign(Object.assign({}, restRelatedProductInformation), { category: categoryId, subcategory: subcategoryId, productImages: productImages.map((img) => img.productImageUrl), discountedPrice, starRating: 0 });
+            const returnableRelatedProduct = Object.assign(Object.assign({}, restRelatedProductInformation), { category: categoryId, subcategory: subcategoryId, vendor: vendorId, productImages: productImages.map((img) => img.productImageUrl), discountedPrice, starRating: 0 });
             return returnableRelatedProduct;
         });
         // get the rates for each of the related products

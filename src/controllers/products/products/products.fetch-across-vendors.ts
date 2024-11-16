@@ -94,6 +94,10 @@ const FetchProductsAcrossVendors = async (req: Request, res: Response) => {
           {
             path: "subcategoryId",
           },
+          {
+            path: "vendorId",
+            select: "-password -mfaActivated -mfaActivatedAt",
+          },
         ])
         .exec(),
     ])
@@ -109,6 +113,7 @@ const FetchProductsAcrossVendors = async (req: Request, res: Response) => {
       const {
         categoryId,
         subcategoryId,
+        vendorId,
         featuredImageId,
         productImages,
         ...restPoductInformation
@@ -125,6 +130,7 @@ const FetchProductsAcrossVendors = async (req: Request, res: Response) => {
         ...restPoductInformation,
         category: categoryId,
         subcategory: subcategoryId,
+        vendor: vendorId,
         productImages: productImages.map((img) => img.productImageUrl),
         discountedPrice,
         starRating: 0,

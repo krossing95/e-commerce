@@ -107,6 +107,10 @@ const FetchProductsAcrossVendors = (req, res) => __awaiter(void 0, void 0, void 
                 {
                     path: "subcategoryId",
                 },
+                {
+                    path: "vendorId",
+                    select: "-password -mfaActivated -mfaActivatedAt",
+                },
             ])
                 .exec(),
         ]);
@@ -117,13 +121,13 @@ const FetchProductsAcrossVendors = (req, res) => __awaiter(void 0, void 0, void 
             pageSize: limit,
         };
         const sendableProductList = results.map((result) => {
-            const _a = result.toObject(), { categoryId, subcategoryId, featuredImageId, productImages } = _a, restPoductInformation = __rest(_a, ["categoryId", "subcategoryId", "featuredImageId", "productImages"]);
+            const _a = result.toObject(), { categoryId, subcategoryId, vendorId, featuredImageId, productImages } = _a, restPoductInformation = __rest(_a, ["categoryId", "subcategoryId", "vendorId", "featuredImageId", "productImages"]);
             // calculate discounted price
             const discountedPrice = (0, method_on_product_1.discountCalculation)({
                 price: restPoductInformation.price,
                 discount: restPoductInformation.discount,
             });
-            const returnableProduct = Object.assign(Object.assign({}, restPoductInformation), { category: categoryId, subcategory: subcategoryId, productImages: productImages.map((img) => img.productImageUrl), discountedPrice, starRating: 0 });
+            const returnableProduct = Object.assign(Object.assign({}, restPoductInformation), { category: categoryId, subcategory: subcategoryId, vendor: vendorId, productImages: productImages.map((img) => img.productImageUrl), discountedPrice, starRating: 0 });
             return returnableProduct;
         });
         // get the rates for each of the products

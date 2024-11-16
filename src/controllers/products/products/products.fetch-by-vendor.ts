@@ -101,6 +101,10 @@ const FetchProductsByVendor = async (req: Request, res: Response) => {
           {
             path: "subcategoryId",
           },
+          {
+            path: "vendorId",
+            select: "-password -mfaActivated -mfaActivatedAt",
+          },
         ])
         .exec(),
     ])
@@ -117,6 +121,7 @@ const FetchProductsByVendor = async (req: Request, res: Response) => {
         categoryId,
         subcategoryId,
         featuredImageId,
+        vendorId,
         productImages,
         ...restPoductInformation
       } = result.toObject() as PopulatedProductModel
@@ -132,6 +137,7 @@ const FetchProductsByVendor = async (req: Request, res: Response) => {
         ...restPoductInformation,
         category: categoryId,
         subcategory: subcategoryId,
+        vendor: vendorId,
         productImages: productImages.map((img) => img.productImageUrl),
         discountedPrice,
         starRating: 0,

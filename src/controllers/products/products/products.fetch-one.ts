@@ -57,6 +57,7 @@ const FetchASingleProduct = async (req: Request, res: Response) => {
       subcategoryId,
       featuredImageId,
       productImages,
+      vendorId,
       ...restProductInformation
     } = productData.toObject() as PopulatedProductModel
 
@@ -71,6 +72,7 @@ const FetchASingleProduct = async (req: Request, res: Response) => {
       ...restProductInformation,
       category: categoryId,
       subcategory: subcategoryId,
+      vendor: vendorId,
       productImages: productImages.map((img) => img.productImageUrl),
       discountedPrice,
       starRating: 0,
@@ -126,6 +128,7 @@ const FetchASingleProduct = async (req: Request, res: Response) => {
         subcategoryId,
         featuredImageId,
         productImages,
+        vendorId,
         ...restRelatedProductInformation
       } = relatedProduct.toObject() as PopulatedProductModel
 
@@ -140,6 +143,7 @@ const FetchASingleProduct = async (req: Request, res: Response) => {
         ...restRelatedProductInformation,
         category: categoryId,
         subcategory: subcategoryId,
+        vendor: vendorId,
         productImages: productImages.map((img) => img.productImageUrl),
         discountedPrice,
         starRating: 0,
