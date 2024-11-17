@@ -17,6 +17,10 @@ exports.paymentInformationSchema = new mongoose_1.default.Schema({
         enum: enum_index_1.PaymentInformationType,
         required: true,
     },
+    bankName: {
+        type: String,
+        required: true,
+    },
     paymentAccountName: {
         type: String,
         required: true,

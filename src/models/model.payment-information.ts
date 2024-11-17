@@ -13,6 +13,10 @@ export const paymentInformationSchema = new mongoose.Schema(
       enum: PaymentInformationType,
       required: true,
     },
+    bankName: {
+      type: String,
+      required: true,
+    },
     paymentAccountName: {
       type: String,
       required: true,

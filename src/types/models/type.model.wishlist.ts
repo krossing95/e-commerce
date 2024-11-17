@@ -1,4 +1,4 @@
-import { ProductModel } from "./type.model.product"
+import { PopulatedProductModel } from "./type.model.product"
 import { UserModel } from "./type.model.user"
 
 export type WishListModel = {
@@ -14,5 +14,5 @@ export type PopulatedWishListModel = Omit<
   "customerId" | "productId"
 > & {
   customerId: UserModel
-  productId: ProductModel
+  productId: PopulatedProductModel
 }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Regions = exports.Regex = exports.SystemName = void 0;
+exports.Regions = exports.Banks = exports.Regex = exports.SystemName = void 0;
 exports.SystemName = "Ecommerce";
 exports.Regex = {
     PASSWORD: /^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*['"{}|:;<>,?!@#$%^&*()\-__+.]){1,}).{8,}$/,
@@ -19,6 +19,206 @@ exports.Regex = {
     DECIMAL_NUM: /^\d+(\.\d{1,3})?$/,
     URL: /^(https?|ftp):\/\/(([a-z\d]([a-z\d-]*[a-z\d])?\.)+[a-z]{2,}|localhost)(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d_]*)?$/i,
 };
+exports.Banks = [
+    {
+        id: 1,
+        bankName: "Paystack Limited",
+        bankAlias: "paystack-gh-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 2,
+        bankName: "Absa Bank Ghana Ltd",
+        bankAlias: "absa-bank-ghana-ltd-usd",
+        bankType: "bank_account",
+    },
+    {
+        id: 3,
+        bankName: "Affinity Ghana Savings and Loans",
+        bankAlias: "affinity-bank-gh",
+        bankType: "bank_account",
+    },
+    {
+        id: 4,
+        bankName: "Best Point Savings & Loans",
+        bankAlias: "best-point-savings-n-loans-gh",
+        bankType: "bank_account",
+    },
+    {
+        id: 5,
+        bankName: "ARB Apex Bank",
+        bankAlias: "arb-apex-bank",
+        bankType: "bank_account",
+    },
+    {
+        id: 6,
+        bankName: "Services Integrity Savings and Loans",
+        bankAlias: "services-integrity-savings-and-loans",
+        bankType: "bank_account",
+    },
+    {
+        id: 7,
+        bankName: "Consolidated Bank Ghana Limited",
+        bankAlias: "consolidated-bank-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 8,
+        bankName: "Bank of Ghana",
+        bankAlias: "bank-of-ghana",
+        bankType: "bank_account",
+    },
+    {
+        id: 9,
+        bankName: "Absa Bank Ghana Ltd",
+        bankAlias: "absa-bank-ghana-ltd",
+        bankType: "bank_account",
+    },
+    {
+        id: 10,
+        bankName: "Vodafone",
+        bankAlias: "vod-mobile-money",
+        bankType: "mobile_money",
+    },
+    {
+        id: 11,
+        bankName: "OmniBSCI Bank",
+        bankAlias: "omnibank-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 12,
+        bankName: "Zenith Bank Ghana",
+        bankAlias: "zenith-bank-ghana",
+        bankType: "bank_account",
+    },
+    {
+        id: 13,
+        bankName: "Universal Merchant Bank Ghana Limited",
+        bankAlias: "universal-merchant-bank-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 14,
+        bankName: "United Bank for Africa Ghana Limited",
+        bankAlias: "united-bank-for-africa-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 15,
+        bankName: "Standard Chartered Bank Ghana Limited",
+        bankAlias: "standard-chartered-bank-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 16,
+        bankName: "Stanbic Bank Ghana Limited",
+        bankAlias: "stanbic-bank-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 17,
+        bankName: "Société Générale Ghana Limited",
+        bankAlias: "société-générale-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 18,
+        bankName: "Prudential Bank Limited",
+        bankAlias: "prudential-bank-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 19,
+        bankName: "National Investment Bank Limited",
+        bankAlias: "national-investment-bank-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 20,
+        bankName: "Republic Bank (GH) Limited",
+        bankAlias: "republic-bank-of-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 21,
+        bankName: "Guaranty Trust Bank (Ghana) Limited",
+        bankAlias: "guaranty-trust-bank-(ghana)-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 22,
+        bankName: "GCB Bank Limited",
+        bankAlias: "gcb-bank-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 23,
+        bankName: "First National Bank Ghana Limited",
+        bankAlias: "first-national-bank-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 24,
+        bankName: "First Atlantic Bank Limited",
+        bankAlias: "first-atlantic-bank-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 25,
+        bankName: "Fidelity Bank Ghana Limited",
+        bankAlias: "fidelity-bank-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 26,
+        bankName: "FBNBank Ghana Limited",
+        bankAlias: "fbnbank-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 27,
+        bankName: "Ecobank Ghana Limited",
+        bankAlias: "ecobank-ghana-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 28,
+        bankName: "CAL Bank Limited",
+        bankAlias: "cal-bank-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 29,
+        bankName: "Bank of Africa Ghana",
+        bankAlias: "bank-of-africa-ghana",
+        bankType: "bank_account",
+    },
+    {
+        id: 30,
+        bankName: "ADB Bank Limited",
+        bankAlias: "adb-bank-limited",
+        bankType: "bank_account",
+    },
+    {
+        id: 31,
+        bankName: "Access Bank",
+        bankAlias: "access-bank-ghana",
+        bankType: "bank_account",
+    },
+    {
+        id: 32,
+        bankName: "AirtelTigo",
+        bankAlias: "atl-mobile-money",
+        bankType: "mobile_money",
+    },
+    {
+        id: 33,
+        bankName: "MTN",
+        bankAlias: "mtn-mobile-money",
+        bankType: "mobile_money",
+    },
+];
 exports.Regions = [
     {
         region: "Greater Accra",

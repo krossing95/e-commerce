@@ -7,6 +7,7 @@ import userRouter from "./src/routes/router.user"
 import productCategoryRouter from "./src/routes/router.product-category"
 import resourcesRouter from "./src/routes/router.resources"
 import productRouter from "./src/routes/routes.product"
+import vendorRoutes from "./src/routes/routes.vendors"
 
 const app = express()
 dotenv.config()
@@ -31,6 +32,7 @@ app.use("/api/users", userRouter)
 app.use("/api/product-categories", productCategoryRouter)
 app.use("/api/resources", resourcesRouter)
 app.use("/api/products", productRouter)
+app.use("/api/vendors", vendorRoutes)
 
 const server = createServer(app)
 server.listen(PORT, () => console.log(`Service is running on port ${PORT}`))
